@@ -1,0 +1,243 @@
+
+create external table marriage_db(area_name varchar(50),to_ru_ur varchar(6),education_level varchar(100),age_at_marriage varchar(20),males int,females int) row format delimited fields terminated by ','stored as TEXTFILE;
+
+TO VERIFY DATA STORED PROPERLY OR NOT
+select * from marriage_db LIMIT 100;
+
+SINCE WE ARE INTERESTED IN FINDING NO OF PEOPLE (MALES AND FEMALES ) WHO MARRIED BELOW 18-19 YEARS OF AGE IN DIFFERENT DISTRICTS OF CHHATTISGARH
+,IRRESPECTIVE OF RURAL AND URBAN,WE WOULD CREATE ANOTHER TABLE AND STORE THE DATA CONTAINING TOTAL FIELDS.
+
+create external table marriage_total like marriage_db;
+
+INSERT OVERWRITE TABLE marriage_total
+SELECT * FROM marriage_db mdb
+WHERE to_ru_ur = 'Total' ;
+
+TO VERIFY RIGHT NO. OF COLUMNS HAS BEEN INSERTED
+
+(TOTAL NO. COLUMNS IN MARRIAGE_DB)-(NO OF COLUMNS WITH URBAN & RURAL)=(TOTAL NO. COLUMNS IN MARRIAGE_TOTAL)
+
+select count(*) from marriage_db;//7296
+select count(*) from marriage_db where to_ru_ur='Urban';//2432
+select count(*) from marriage_db where to_ru_ur='Rural';//2432
+
+select count(*) from marriage_total;//2432
+
+7296-(2432+2432)=2432 (verified)
+
+USECASE -I 
+TO CHECK HOW MANY PEOPLE BELOW 18 MARRIED , AND WHAT WAS THERE EDUCATIONAL QUALIFICATION
+_________________________________________________________________________________________________________________________________________
+
+select area_name,education_level,sum(males),sum(females) from marriage_total 
+where (age_at_marriage ='10-11' OR age_at_marriage = '12-13' OR age_at_marriage ='14-15' OR age_at_marriage = '16-17') group by area_name,education_level;
+
+output
+District - Bastar	Graduate and above	98	193
+District - Bastar	Illiterate	4879	60496
+District - Bastar	Literate	4223	17773
+District - Bastar	Literate but below primary 	970	3399
+District - Bastar	Matric or secondary but below graduate	405	1869
+District - Bastar	Middle but below matric or secondary	1025	4505
+District - Bastar	Primary but below middle	1489	6673
+District - Bastar	Total	9102	78269
+District - Bijapur	Graduate and above	11	14
+District - Bijapur	Illiterate	500	5625
+District - Bijapur	Literate	328	1178
+District - Bijapur	Literate but below primary 	26	95
+District - Bijapur	Matric or secondary but below graduate	61	146
+District - Bijapur	Middle but below matric or secondary	100	344
+District - Bijapur	Primary but below middle	109	475
+District - Bijapur	Total	828	6803
+District - Bilaspur	Graduate and above	1202	1136
+District - Bilaspur	Illiterate	31017	216291
+District - Bilaspur	Literate	41774	99974
+District - Bilaspur	Literate but below primary 	12908	24368
+District - Bilaspur	Matric or secondary but below graduate	5292	8922
+District - Bilaspur	Middle but below matric or secondary	7684	23084
+District - Bilaspur	Primary but below middle	13312	38197
+District - Bilaspur	Total	72791	316265
+District - Dakshin Bastar Dantewada	Graduate and above	28	56
+District - Dakshin Bastar Dantewada	Illiterate	1249	14681
+District - Dakshin Bastar Dantewada	Literate	885	3825
+District - Dakshin Bastar Dantewada	Literate but below primary 	117	513
+District - Dakshin Bastar Dantewada	Matric or secondary but below graduate	142	530
+District - Dakshin Bastar Dantewada	Middle but below matric or secondary	236	881
+District - Dakshin Bastar Dantewada	Primary but below middle	285	1574
+District - Dakshin Bastar Dantewada	Total	2134	18506
+District - Dhamtari 	Graduate and above	153	102
+District - Dhamtari 	Illiterate	3430	49874
+District - Dhamtari 	Literate	7252	33964
+District - Dhamtari 	Literate but below primary 	2744	9998
+District - Dhamtari 	Matric or secondary but below graduate	655	2012
+District - Dhamtari 	Middle but below matric or secondary	1002	6678
+District - Dhamtari 	Primary but below middle	2378	13224
+District - Dhamtari 	Total	10682	83838
+District - Durg	Graduate and above	1316	1512
+District - Durg	Illiterate	34892	238115
+District - Durg	Literate	59616	166340
+District - Durg	Literate but below primary 	19324	42748
+District - Durg	Matric or secondary but below graduate	7284	14512
+District - Durg	Middle but below matric or secondary	10326	33858
+District - Durg	Primary but below middle	18956	63798
+District - Durg	Total	94508	404455
+District - Janjgir - Champa	Graduate and above	513	345
+District - Janjgir - Champa	Illiterate	12234	116354
+District - Janjgir - Champa	Literate	19830	51822
+District - Janjgir - Champa	Literate but below primary 	7399	13594
+District - Janjgir - Champa	Matric or secondary but below graduate	3103	5401
+District - Janjgir - Champa	Middle but below matric or secondary	3082	12637
+District - Janjgir - Champa	Primary but below middle	5100	17617
+District - Janjgir - Champa	Total	32064	168176
+District - Jashpur 	Graduate and above	75	105
+District - Jashpur 	Illiterate	3519	34361
+District - Jashpur 	Literate	4273	15897
+District - Jashpur 	Literate but below primary 	938	2720
+District - Jashpur 	Matric or secondary but below graduate	390	1388
+District - Jashpur 	Middle but below matric or secondary	1082	4687
+District - Jashpur 	Primary but below middle	1522	5939
+District - Jashpur 	Total	7792	50258
+District - Kabeerdham	Graduate and above	392	110
+District - Kabeerdham	Illiterate	25554	96859
+District - Kabeerdham	Literate	26969	29883
+District - Kabeerdham	Literate but below primary 	9037	8726
+District - Kabeerdham	Matric or secondary but below graduate	1798	1482
+District - Kabeerdham	Middle but below matric or secondary	4611	5252
+District - Kabeerdham	Primary but below middle	10054	12551
+District - Kabeerdham	Total	52523	126742
+District - Korba 	Graduate and above	379	498
+District - Korba 	Illiterate	6810	70394
+District - Korba 	Literate	10255	37053
+District - Korba 	Literate but below primary 	2642	7517
+District - Korba 	Matric or secondary but below graduate	1557	4288
+District - Korba 	Middle but below matric or secondary	2151	9440
+District - Korba 	Primary but below middle	3143	13262
+District - Korba 	Total	17065	107447
+District - Koriya	Graduate and above	320	315
+District - Koriya	Illiterate	9283	54032
+District - Koriya	Literate	13867	29503
+District - Koriya	Literate but below primary 	3706	5788
+District - Koriya	Matric or secondary but below graduate	1342	2799
+District - Koriya	Middle but below matric or secondary	2862	6659
+District - Koriya	Primary but below middle	4871	11420
+District - Koriya	Total	23150	83535
+District - Mahasamund	Graduate and above	123	105
+District - Mahasamund	Illiterate	5397	73707
+District - Mahasamund	Literate	7224	31843
+District - Mahasamund	Literate but below primary 	2678	8429
+District - Mahasamund	Matric or secondary but below graduate	574	1979
+District - Mahasamund	Middle but below matric or secondary	1118	6220
+District - Mahasamund	Primary but below middle	2424	13043
+District - Mahasamund	Total	12621	105550
+District - Narayanpur	Graduate and above	7	5
+District - Narayanpur	Illiterate	338	4180
+District - Narayanpur	Literate	239	999
+District - Narayanpur	Literate but below primary 	35	205
+District - Narayanpur	Matric or secondary but below graduate	25	91
+District - Narayanpur	Middle but below matric or secondary	46	188
+District - Narayanpur	Primary but below middle	106	399
+District - Narayanpur	Total	577	5179
+District - Raigarh	Graduate and above	218	308
+District - Raigarh	Illiterate	6878	76074
+District - Raigarh	Literate	10621	43614
+District - Raigarh	Literate but below primary 	3803	12142
+District - Raigarh	Matric or secondary but below graduate	1003	3408
+District - Raigarh	Middle but below matric or secondary	1694	8271
+District - Raigarh	Primary but below middle	3282	16307
+District - Raigarh	Total	17499	119688
+District - Raipur	Graduate and above	1260	1528
+District - Raipur	Illiterate	26872	253276
+District - Raipur	Literate	46034	144883
+District - Raipur	Literate but below primary 	14638	35140
+District - Raipur	Matric or secondary but below graduate	5626	13623
+District - Raipur	Middle but below matric or secondary	8197	32625
+District - Raipur	Primary but below middle	14641	55338
+District - Raipur	Total	72906	398159
+District - Rajnandgaon	Graduate and above	513	280
+District - Rajnandgaon	Illiterate	20189	115877
+District - Rajnandgaon	Literate	30898	66170
+District - Rajnandgaon	Literate but below primary 	9844	15544
+District - Rajnandgaon	Matric or secondary but below graduate	2432	3404
+District - Rajnandgaon	Middle but below matric or secondary	6343	16533
+District - Rajnandgaon	Primary but below middle	10360	25496
+District - Rajnandgaon	Total	51087	182047
+District - Surguja	Graduate and above	622	674
+District - Surguja	Illiterate	34537	189810
+District - Surguja	Literate	28430	64116
+District - Surguja	Literate but below primary 	5597	8392
+District - Surguja	Matric or secondary but below graduate	2969	6685
+District - Surguja	Middle but below matric or secondary	7437	19665
+District - Surguja	Primary but below middle	10166	24297
+District - Surguja	Total	62967	253926
+District - Uttar Bastar Kanker	Graduate and above	69	67
+District - Uttar Bastar Kanker	Illiterate	1282	20941
+District - Uttar Bastar Kanker	Literate	2115	13776
+District - Uttar Bastar Kanker	Literate but below primary 	611	3408
+District - Uttar Bastar Kanker	Matric or secondary but below graduate	262	982
+District - Uttar Bastar Kanker	Middle but below matric or secondary	366	2874
+District - Uttar Bastar Kanker	Primary but below middle	679	5209
+District - Uttar Bastar Kanker	Total	3397	34717
+State - CHHATTISGARH	Graduate and above	7299	7353
+State - CHHATTISGARH	Illiterate	228860	1690947
+State - CHHATTISGARH	Literate	314833	852613
+State - CHHATTISGARH	Literate but below primary 	97017	202726
+State - CHHATTISGARH	Matric or secondary but below graduate	34920	73521
+State - CHHATTISGARH	Middle but below matric or secondary	59362	194401
+State - CHHATTISGARH	Primary but below middle	102877	324819
+State - CHHATTISGARH	Total	543693	2543560
+Time taken: 1.334 seconds, Fetched: 152 row(s)
+
+USECASE II
+____________________________________________________________________________________________________________________________________
+
+TO CHECK TREND AS PER RURAL AND URBAN
+
+hive> select area_name,to_ru_ur,sum(males),sum(females) from marriage_db
+where (age_at_marriage ='10-11' OR age_at_marriage = '12-13' OR age_at_marriage ='14-15' OR age_at_marriage = '16-17') AND to_ru_ur <> 'Total' group by area_name,to_ru_ur;
+
+OUTPUT
+
+District - Bastar	Rural	18782	140762
+District - Bastar	Urban	3409	32415
+District - Bijapur	Rural	1573	11837
+District - Bijapur	Urban	390	2843
+District - Bilaspur	Rural	160726	576642
+District - Bilaspur	Urban	25254	151595
+District - Dakshin Bastar Dantewada	Rural	3809	28152
+District - Dakshin Bastar Dantewada	Urban	1267	12414
+District - Dhamtari 	Rural	23838	164905
+District - Dhamtari 	Urban	4458	34785
+District - Durg	Rural	198449	668634
+District - Durg	Urban	47773	296704
+District - Janjgir - Champa	Rural	74800	334812
+District - Janjgir - Champa	Urban	8525	51134
+District - Jashpur 	Rural	18411	104729
+District - Jashpur 	Urban	1180	10626
+District - Kabeerdham	Rural	124020	257094
+District - Kabeerdham	Urban	6918	24511
+District - Korba 	Rural	29911	157253
+District - Korba 	Urban	14091	92646
+District - Koriya	Rural	50015	144613
+District - Koriya	Urban	9386	49438
+District - Mahasamund	Rural	29587	215304
+District - Mahasamund	Urban	2572	25572
+District - Narayanpur	Rural	1117	8603
+District - Narayanpur	Urban	256	2643
+District - Raigarh	Rural	40647	238667
+District - Raigarh	Urban	4351	41145
+District - Raipur	Rural	140778	637559
+District - Raipur	Urban	49396	297013
+District - Rajnandgaon	Rural	121815	367320
+District - Rajnandgaon	Urban	9851	58031
+District - Surguja	Rural	143232	517794
+District - Surguja	Urban	9493	49771
+District - Uttar Bastar Kanker	Rural	7677	70590
+District - Uttar Bastar Kanker	Urban	1104	11384
+State - CHHATTISGARH	Rural	1189187	4645270
+State - CHHATTISGARH	Urban	199674	1244670
+
+
+
+
+
+
